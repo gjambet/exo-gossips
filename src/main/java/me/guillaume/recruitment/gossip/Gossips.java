@@ -46,15 +46,35 @@ public class Gossips {
 
     public void spread() {
         Map<String, String> newMisterToMessage = new HashMap<>();
-        for (String mister : misterToListener.keySet()) {
-            String listener = misterToListener.get(mister);
-            if (misterToMessage.containsKey(mister)) {
-                newMisterToMessage.put(listener, misterToMessage.get(mister));
-            }
-        }
+        misterToListener.keySet().forEach(mister -> spreadForMister(mister, newMisterToMessage));
         replaceContent(misterToMessage, newMisterToMessage);
     }
 
+    private void spreadForMister(String mister, Map<String, String> newMisterToMessage) {
+        String listener = misterToListener.get(mister);
+        if (listenerAlreadyReceivedAMessage(newMisterToMessage, listener)) {
+            retainMessageOfMister(newMisterToMessage, mister, misterToMessage.get(mister));
+        }
+        else if (misterHasAMessageToSpread(mister)) {
+            spreadMessage(newMisterToMessage, listener, misterToMessage.get(mister));
+        }
+    }
+
+    private static boolean listenerAlreadyReceivedAMessage(Map<String, String> newMisterToMessage, String listener) {
+        return newMisterToMessage.containsKey(listener);
+    }
+
+    private static void retainMessageOfMister(Map<String, String> newMisterToMessage, String mister, String message) {
+        newMisterToMessage.put(mister, message);
+    }
+
+    private boolean misterHasAMessageToSpread(String mister) {
+        return misterToMessage.containsKey(mister);
+    }
+
+    private static void spreadMessage(Map<String, String> newMisterToMessage, String listener, String message) {
+        newMisterToMessage.put(listener, message);
+    }
 
     private static void replaceContent(Map<String, String> source, Map<String, String> newContent) {
         source.clear();
