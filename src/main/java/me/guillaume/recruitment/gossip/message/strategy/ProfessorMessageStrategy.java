@@ -20,7 +20,7 @@ class ProfessorMessageStrategy implements MessageStrategy {
     }
 
     @Override
-    public boolean updateMessage(String newMessage) {
+    public boolean updateMessage(Person sender, String newMessage) {
         if (isSecondTurn) {
             throw new IllegalStateException("Professor can't accept a new message until previous one is propagated.");
         }
@@ -30,12 +30,12 @@ class ProfessorMessageStrategy implements MessageStrategy {
     }
 
     @Override
-    public void spread(Person listener) {
+    public void spread(Person spreader, Person listener) {
         if (message == null) {
             return;
         }
         if (isSecondTurn) {
-            boolean listenerUpdated = listener.updateMessage(message);
+            boolean listenerUpdated = listener.updateMessage(spreader, message);
             if (listenerUpdated) {
                 message = null;
                 isSecondTurn = false;

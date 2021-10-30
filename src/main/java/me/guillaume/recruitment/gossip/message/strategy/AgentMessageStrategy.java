@@ -20,13 +20,13 @@ class AgentMessageStrategy implements MessageStrategy {
     }
 
     @Override
-    public boolean updateMessage(String newMessage) {
+    public boolean updateMessage(Person sender, String newMessage) {
         newMessages.add(newMessage);
         return true;
     }
 
     @Override
-    public void spread(Person listener) {
+    public void spread(Person spreader, Person listener) {
         //
     }
 

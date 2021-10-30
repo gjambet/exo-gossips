@@ -9,12 +9,14 @@ public interface MessageStrategy {
 
     /**
      *
+     *
+     * @param sender
      * @param newMessage candidate message to be set
      * @return true in case the new message was taken into account / false otherwise
      */
-    boolean updateMessage(String newMessage);
+    boolean updateMessage(Person sender, String newMessage);
 
-    void spread(Person listener);
+    void spread(Person spreader, Person listener);
 
     /**
      * CompleteSpread denotes the completion of a spread

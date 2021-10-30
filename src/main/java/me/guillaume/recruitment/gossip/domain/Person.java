@@ -5,13 +5,19 @@ import com.google.common.base.Objects;
 import me.guillaume.recruitment.gossip.message.strategy.MessageStrategy;
 
 public class Person {
+    private final String title;
     private final String name;
     private final MessageStrategy messageStrategy;
     private Person listener;
 
-    public Person(String name, MessageStrategy messageStrategy) {
+    public Person(String title, String name, MessageStrategy messageStrategy) {
+        this.title = title;
         this.name = name;
         this.messageStrategy = messageStrategy;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public String getName() {
@@ -30,13 +36,13 @@ public class Person {
         messageStrategy.initializeMessage(message);
     }
 
-    public boolean updateMessage(String newMessage) {
-        return messageStrategy.updateMessage(newMessage);
+    public boolean updateMessage(Person sender, String newMessage) {
+        return messageStrategy.updateMessage(sender, newMessage);
     }
 
     public void spread() {
         if (listener != null) {
-            messageStrategy.spread(listener);
+            messageStrategy.spread(this, listener);
         }
     }
 
@@ -51,12 +57,12 @@ public class Person {
         if (o == null || getClass() != o.getClass())
             return false;
         Person person = (Person) o;
-        return Objects.equal(name, person.name) && Objects.equal(messageStrategy, person.messageStrategy)
-                && Objects.equal(listener, person.listener);
+        return Objects.equal(title, person.title) && Objects.equal(name, person.name) && Objects.equal(messageStrategy,
+                person.messageStrategy) && Objects.equal(listener, person.listener);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, messageStrategy, listener);
+        return Objects.hashCode(title, name, messageStrategy, listener);
     }
 }

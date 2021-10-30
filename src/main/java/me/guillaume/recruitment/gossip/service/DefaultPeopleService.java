@@ -39,7 +39,7 @@ public class DefaultPeopleService implements PeopleService {
         String title = misterTypeAndNameArray[0];
         String name = misterTypeAndNameArray[1];
         MessageStrategy messageStrategy = messageStrategyFactory.createMessageStrategy(title);
-        return new Person(name, messageStrategy);
+        return new Person(title, name, messageStrategy);
     }
 
     private void savePerson(Person person) {

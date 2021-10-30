@@ -18,6 +18,7 @@ import me.guillaume.recruitment.gossip.message.strategy.MessageStrategy;
 @ExtendWith(MockitoExtension.class)
 class PersonTest {
 
+    private static final String TEST_PERSON_TITLE = "Mr";
     private static final String TEST_PERSON_NAME = "Test";
     private static final String TEST_MESSAGE = "Message";
 
@@ -25,10 +26,12 @@ class PersonTest {
     private MessageStrategy messageStrategy;
 
     private Person person;
+    private Person person2;
 
     @BeforeEach
-    void setUp(){
-        person = new Person(TEST_PERSON_NAME, messageStrategy);
+    void setUp() {
+        person = new Person(TEST_PERSON_TITLE, TEST_PERSON_NAME, messageStrategy);
+        person2 = new Person(TEST_PERSON_TITLE, TEST_PERSON_NAME + 2, messageStrategy);
     }
 
     @Test
@@ -51,9 +54,9 @@ class PersonTest {
 
     @Test
     void updateMessageDelegatesToMessageStrategy() {
-        when(messageStrategy.updateMessage(any())).thenReturn(true);
-        assertThat(person.updateMessage(TEST_MESSAGE)).isTrue();
-        verify(messageStrategy).updateMessage(TEST_MESSAGE);
+        when(messageStrategy.updateMessage(any(), any())).thenReturn(true);
+        assertThat(person.updateMessage(person2, TEST_MESSAGE)).isTrue();
+        verify(messageStrategy).updateMessage(person2, TEST_MESSAGE);
     }
 
     @Test
@@ -61,7 +64,7 @@ class PersonTest {
         Person listener = mock(Person.class);
         person.setListener(listener);
         person.spread();
-        verify(messageStrategy).spread(listener);
+        verify(messageStrategy).spread(person2, listener);
     }
 
     @Test

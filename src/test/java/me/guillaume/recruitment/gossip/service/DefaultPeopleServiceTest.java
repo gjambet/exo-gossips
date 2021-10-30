@@ -36,7 +36,7 @@ class DefaultPeopleServiceTest {
 
         peopleService.createAndSavePerson(TEST_PERSON_TITLE + " " + TEST_PERSON_NAME);
 
-        Person expectedPerson = buildExpectedPerson(TEST_PERSON_NAME, messageStrategy);
+        Person expectedPerson = buildExpectedPerson(TEST_PERSON_TITLE, TEST_PERSON_NAME, messageStrategy);
         assertThat(peopleService.getPeople().values()).contains(expectedPerson);
         verify(messageStrategyFactory).createMessageStrategy(TEST_PERSON_TITLE);
     }
@@ -44,8 +44,8 @@ class DefaultPeopleServiceTest {
     @Test
     void findAllReturnsAllPerson() {
         MessageStrategy messageStrategy = mock(MessageStrategy.class);
-        Person expectedPerson1 = buildExpectedPerson(TEST_PERSON_NAME, messageStrategy);
-        Person expectedPerson2 = buildExpectedPerson(TEST_PERSON_NAME + "2", messageStrategy);
+        Person expectedPerson1 = buildExpectedPerson(TEST_PERSON_TITLE, TEST_PERSON_NAME, messageStrategy);
+        Person expectedPerson2 = buildExpectedPerson(TEST_PERSON_TITLE, TEST_PERSON_NAME + "2", messageStrategy);
         peopleService.getPeople().put(expectedPerson1.getName(), expectedPerson1);
         peopleService.getPeople().put(expectedPerson2.getName(), expectedPerson2);
 
@@ -57,7 +57,7 @@ class DefaultPeopleServiceTest {
     @Test
     void findPersonOrThrowIfPersonExistsReturnsIt() {
         MessageStrategy messageStrategy = mock(MessageStrategy.class);
-        Person expectedPerson1 = buildExpectedPerson(TEST_PERSON_NAME, messageStrategy);
+        Person expectedPerson1 = buildExpectedPerson(TEST_PERSON_TITLE, TEST_PERSON_NAME, messageStrategy);
         peopleService.getPeople().put(expectedPerson1.getName(), expectedPerson1);
 
         assertThat(peopleService.findPersonOrThrow(TEST_PERSON_NAME)).isEqualTo(expectedPerson1);
@@ -66,7 +66,7 @@ class DefaultPeopleServiceTest {
     @Test
     void findPersonOrThrowIfPersonDoesNotExistsThrows() {
         MessageStrategy messageStrategy = mock(MessageStrategy.class);
-        Person expectedPerson2 = buildExpectedPerson(TEST_PERSON_NAME + "2", messageStrategy);
+        Person expectedPerson2 = buildExpectedPerson(TEST_PERSON_TITLE, TEST_PERSON_NAME + "2", messageStrategy);
         peopleService.getPeople().put(expectedPerson2.getName(), expectedPerson2);
 
         assertThatIllegalArgumentException()
@@ -74,7 +74,7 @@ class DefaultPeopleServiceTest {
                 .withMessage("The person Test passed as argument is not known. People known are: [Test2]");
     }
 
-    private static Person buildExpectedPerson(String name, MessageStrategy messageStrategy) {
-        return new Person(name, messageStrategy);
+    private static Person buildExpectedPerson(String title, String name, MessageStrategy messageStrategy) {
+        return new Person(title, name, messageStrategy);
     }
 }

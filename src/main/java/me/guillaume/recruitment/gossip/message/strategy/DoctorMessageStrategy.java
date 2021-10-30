@@ -22,7 +22,7 @@ class DoctorMessageStrategy implements MessageStrategy {
     }
 
     @Override
-    public boolean updateMessage(String newMessage) {
+    public boolean updateMessage(Person sender, String newMessage) {
         if (this.newMessage != null) {
             return false;
         }
@@ -31,9 +31,9 @@ class DoctorMessageStrategy implements MessageStrategy {
     }
 
     @Override
-    public void spread(Person listener) {
+    public void spread(Person spreader, Person listener) {
         if (itemToGossip < messages.size()) {
-            boolean listenerUpdated = listener.updateMessage(messages.get(itemToGossip));
+            boolean listenerUpdated = listener.updateMessage(spreader, messages.get(itemToGossip));
             if (listenerUpdated) {
                 itemToGossip++;
             }
