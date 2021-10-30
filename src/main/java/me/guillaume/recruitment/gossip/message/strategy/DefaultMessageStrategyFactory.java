@@ -13,6 +13,7 @@ public class DefaultMessageStrategyFactory implements MessageStrategyFactory {
                 .put("Mr", MisterMessageStrategy::new)
                 .put("Dr", DoctorMessageStrategy::new)
                 .put("Agent", AgentMessageStrategy::new)
+                .put("Pr", ProfessorMessageStrategy::new)
                 .build();
 
     @Override

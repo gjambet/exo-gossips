@@ -2,11 +2,12 @@ package me.guillaume.recruitment.gossip.message.strategy;
 
 import me.guillaume.recruitment.gossip.domain.Person;
 
-class MisterMessageStrategy implements MessageStrategy {
+class ProfessorMessageStrategy implements MessageStrategy {
 
     private String message;
     private String newMessage;
     private boolean isUpdated = false;
+    private boolean isSecondTurn = false;
 
     @Override
     public void initializeMessage(String message) {
@@ -20,8 +21,8 @@ class MisterMessageStrategy implements MessageStrategy {
 
     @Override
     public boolean updateMessage(String newMessage) {
-        if (isUpdated) {
-            return false;
+        if (isSecondTurn) {
+            throw new IllegalStateException("Professor can't accept a new message until previous one is propagated.");
         }
         this.newMessage = newMessage;
         isUpdated = true;
@@ -30,12 +31,17 @@ class MisterMessageStrategy implements MessageStrategy {
 
     @Override
     public void spread(Person listener) {
-        if (message == null){
+        if (message == null) {
             return;
         }
-        boolean listenerUpdated = listener.updateMessage(message);
-        if (listenerUpdated) {
-            message = null;
+        if (isSecondTurn) {
+            boolean listenerUpdated = listener.updateMessage(message);
+            if (listenerUpdated) {
+                message = null;
+                isSecondTurn = false;
+            }
+        } else  {
+            isSecondTurn = true;
         }
     }
 
@@ -47,5 +53,4 @@ class MisterMessageStrategy implements MessageStrategy {
         newMessage = null;
         isUpdated = false;
     }
-
 }
