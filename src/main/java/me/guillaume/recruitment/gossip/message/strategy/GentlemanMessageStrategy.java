@@ -2,7 +2,7 @@ package me.guillaume.recruitment.gossip.message.strategy;
 
 import me.guillaume.recruitment.gossip.domain.Person;
 
-class LadyMessageStrategy implements MessageStrategy {
+class GentlemanMessageStrategy implements MessageStrategy {
 
     private Person sender;
     private String message;
@@ -36,18 +36,12 @@ class LadyMessageStrategy implements MessageStrategy {
         if (message == null) {
             return;
         }
-        if ("Mr".equals(sender.getTitle())) {
-            return;
+        String revertedMessage = new StringBuilder(message).reverse().toString();
+        boolean listenerUpdated = sender.updateMessage(spreader, revertedMessage);
+        if (listenerUpdated) {
+            message = null;
+            sender = null;
         }
-        if ("Dr".equals(sender.getTitle())) {
-            boolean listenerUpdated = listener.updateMessage(spreader, message);
-            if (listenerUpdated) {
-                message = null;
-                sender = null;
-            }
-            return;
-        }
-        throw new IllegalStateException("Lady only knows how to deal with Mr or Dr, not " + this.sender.getTitle());
     }
 
     @Override

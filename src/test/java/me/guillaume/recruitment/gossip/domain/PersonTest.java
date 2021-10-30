@@ -64,7 +64,7 @@ class PersonTest {
         Person listener = mock(Person.class);
         person.setListener(listener);
         person.spread();
-        verify(messageStrategy).spread(person2, listener);
+        verify(messageStrategy).spread(person, listener);
     }
 
     @Test
