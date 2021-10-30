@@ -4,34 +4,34 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 import org.junit.jupiter.api.Test;
 
-public class AdditionalGossipsTest {
+class AdditionalGossipsTest {
     private static final String TEST_MESSAGE = "Test message";
-    private static final String UNKNOWN_MISTER = "Unknown";
-    private static final String KNOWN_MISTER = "White";
+    private static final String UNKNOWN_PERSON = "Unknown";
+    private static final String KNOWN_PERSON = "White";
 
     @Test
-    public void askThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
+    void askThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
         Gossips gossips = new Gossips("Mr White", "Mr Black", "Mr Blue");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> gossips.ask(UNKNOWN_MISTER));
+        assertThatIllegalArgumentException().isThrownBy(() -> gossips.ask(UNKNOWN_PERSON));
     }
 
     @Test
-    public void sayToThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
+    void sayToThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
         Gossips gossips = new Gossips("Mr White", "Mr Black", "Mr Blue");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> gossips.say(TEST_MESSAGE).to(UNKNOWN_MISTER));
+        assertThatIllegalArgumentException().isThrownBy(() -> gossips.say(TEST_MESSAGE).to(UNKNOWN_PERSON));
     }
 
     @Test
-    public void sayThrowsIllegalArgumentExceptionIfMessageIsNull() {
+    void sayThrowsIllegalArgumentExceptionIfMessageIsNull() {
         Gossips gossips = new Gossips("Mr White", "Mr Black", "Mr Blue");
 
         assertThatIllegalArgumentException().isThrownBy(() -> gossips.say(null))
                 .withMessage("The message provided (null) is not valid");
     }
     @Test
-    public void sayThrowsIllegalArgumentExceptionIfMessageIsBlank() {
+    void sayThrowsIllegalArgumentExceptionIfMessageIsBlank() {
         Gossips gossips = new Gossips("Mr White", "Mr Black", "Mr Blue");
 
         assertThatIllegalArgumentException().isThrownBy(() -> gossips.say(" "))
@@ -39,17 +39,17 @@ public class AdditionalGossipsTest {
     }
 
     @Test
-    public void fromThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
+    void fromThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
         Gossips gossips = new Gossips("Mr White", "Mr Black", "Mr Blue");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> gossips.from(UNKNOWN_MISTER));
+        assertThatIllegalArgumentException().isThrownBy(() -> gossips.from(UNKNOWN_PERSON));
     }
 
     @Test
-    public void fromToThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
+    void fromToThrowsIllegalArgumentExceptionIfMisterIsUnknown() {
         Gossips gossips = new Gossips("Mr White", "Mr Black", "Mr Blue");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> gossips.from(KNOWN_MISTER).to(UNKNOWN_MISTER));
+        assertThatIllegalArgumentException().isThrownBy(() -> gossips.from(KNOWN_PERSON).to(UNKNOWN_PERSON));
     }
 
 }

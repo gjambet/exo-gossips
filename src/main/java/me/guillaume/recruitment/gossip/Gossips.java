@@ -1,37 +1,43 @@
 package me.guillaume.recruitment.gossip;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.stream.Collectors.toSet;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.Collection;
 
-import com.google.common.collect.MoreCollectors;
+import me.guillaume.recruitment.gossip.domain.Person;
+import me.guillaume.recruitment.gossip.service.DefaultPeopleService;
+import me.guillaume.recruitment.gossip.service.PeopleService;
 
 /**
  * This class provide several functionalities to exchange gossips between misters.
  *
- * The implementation is not thread-safe, given the tests, it does not seem to be a requirement.
+ * Warning: the implementation in general is not thread-safe.
+ *
+ * Remarks:
+ * Ideally we should inject all dependencies of all classes using a DI framework, such as Spring
+ * All classes must be unit tested in order for the code to be production ready. In this assignment few classes are not
+ * properly unit tested (mainly implementations of MessageStrategy and Gossips)
+ *
  */
 public class Gossips {
-    private static final String NO_MESSAGE = "";
+    private static final String DEFAULT_MESSAGE = "";
+    private final PeopleService peopleService;
 
-    private final Set<String> misters;
-    private final Map<String, String> misterToListener;
-    private final Map<String, String> misterToMessage;
-
-    public Gossips(String... misters) {
-        this.misters = Arrays.stream(misters).collect(toSet());
-        this.misterToListener = new HashMap<>();
-        this.misterToMessage = new HashMap<>();
+    public Gossips(String... misterStrings) {
+        peopleService = new DefaultPeopleService();
+        Arrays.stream(misterStrings)
+                .forEach(peopleService::createAndSavePerson);
     }
 
-    public MisterToListenerBuilder from(String mister) {
-        assertMisterIsKnown(mister);
-        return new MisterToListenerBuilder(this, mister);
+    public String ask(String misterName) {
+        String message = peopleService.findPersonOrThrow(misterName).getMessage();
+        return message == null ? DEFAULT_MESSAGE : message;
+    }
+
+    public MisterToListenerBuilder from(String misterName) {
+        Person person = peopleService.findPersonOrThrow(misterName);
+        return new MisterToListenerBuilder(this, person);
     }
 
     public MessageToEmitBuilder say(String message) {
@@ -39,78 +45,28 @@ public class Gossips {
         return new MessageToEmitBuilder(this, message);
     }
 
-    public String ask(String mister) {
-        assertMisterIsKnown(mister);
-        return misterToMessage.getOrDefault(mister, NO_MESSAGE);
-    }
-
     public void spread() {
-        Map<String, String> newMisterToMessage = new HashMap<>();
-        misterToListener.keySet().forEach(mister -> spreadForMister(mister, newMisterToMessage));
-        replaceContent(misterToMessage, newMisterToMessage);
+        Collection<Person> people = peopleService.findAll();
+        people.forEach(Person::spread);
+        people.forEach(Person::completeSpread);
     }
 
-    private void spreadForMister(String mister, Map<String, String> newMisterToMessage) {
-        String listener = misterToListener.get(mister);
-        if (listenerAlreadyReceivedAMessage(newMisterToMessage, listener)) {
-            retainMessageOfMister(newMisterToMessage, mister, misterToMessage.get(mister));
-        }
-        else if (misterHasAMessageToSpread(mister)) {
-            spreadMessage(newMisterToMessage, listener, misterToMessage.get(mister));
-        }
-    }
-
-    private static boolean listenerAlreadyReceivedAMessage(Map<String, String> newMisterToMessage, String listener) {
-        return newMisterToMessage.containsKey(listener);
-    }
-
-    private static void retainMessageOfMister(Map<String, String> newMisterToMessage, String mister, String message) {
-        newMisterToMessage.put(mister, message);
-    }
-
-    private boolean misterHasAMessageToSpread(String mister) {
-        return misterToMessage.containsKey(mister);
-    }
-
-    private static void spreadMessage(Map<String, String> newMisterToMessage, String listener, String message) {
-        newMisterToMessage.put(listener, message);
-    }
-
-    private static void replaceContent(Map<String, String> source, Map<String, String> newContent) {
-        source.clear();
-        source.putAll(newContent);
-    }
-
-    private Map<String, String> getMisterToListener() {
-        return misterToListener;
-    }
-
-    private Map<String, String> getMisterToMessage() {
-        return misterToMessage;
-    }
-
-    private void assertMisterIsKnown(String mister) {
-        // TODO: this check is not ultra-robust, it would for instance accepts a "mister" whose name is "Mr" since it will
-        // match the first part of an existing mister. To be improved in subsequent commits.
-        Optional<String> existingMister = misters.stream()
-                .filter(m -> m.contains(mister))
-                .collect(MoreCollectors.toOptional());
-        checkArgument(existingMister.isPresent(), "The mister %s passed as argument is not known. Misters known are: %s",
-                mister, misters);
+    private PeopleService getPeopleService() {
+        return peopleService;
     }
 
     static class MisterToListenerBuilder {
         private final Gossips wrappedGossip;
-        private final String mister;
+        private final Person person;
 
-        MisterToListenerBuilder(Gossips gossip, String mister) {
+        MisterToListenerBuilder(Gossips gossip, Person person) {
             this.wrappedGossip = gossip;
-            this.mister = mister;
+            this.person = person;
         }
 
-        public Gossips to(String listener) {
-            wrappedGossip.assertMisterIsKnown(listener);
-            wrappedGossip.getMisterToListener().put(mister, listener);
+        public Gossips to(String listenerName) {
+            Person listener = wrappedGossip.getPeopleService().findPersonOrThrow(listenerName);
+            person.setListener(listener);
             return wrappedGossip;
         }
     }
@@ -124,9 +80,9 @@ public class Gossips {
             this.message = message;
         }
 
-        public Gossips to(String mister) {
-            wrappedGossip.assertMisterIsKnown(mister);
-            wrappedGossip.getMisterToMessage().put(mister, message);
+        public Gossips to(String misterName) {
+            Person person = wrappedGossip.getPeopleService().findPersonOrThrow(misterName);
+            person.initializeMessage(message);
             return wrappedGossip;
         }
     }
