@@ -99,8 +99,8 @@ public class GossipsShould {
 
         gossips.spread();
 
-        assertThat(gossips.ask("Blue")).isEqualTo("");
-        assertThat(gossips.ask("Blue")).isEqualTo("");
+        assertThat(gossips.ask("Blue")).isEqualTo(""); // this assertion is probably meant to be for mr White?
+        assertThat(gossips.ask("Blue")).isEqualTo(""); // this assertion is probably meant to be for mr Grey?
         assertThat(gossips.ask("Pink")).isEqualTo("Hello, Shade");
 
         gossips.spread();

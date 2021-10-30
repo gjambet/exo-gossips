@@ -12,6 +12,7 @@ public class DefaultMessageStrategyFactory implements MessageStrategyFactory {
             ImmutableMap.<String, Supplier<MessageStrategy>>builder()
                 .put("Mr", MisterMessageStrategy::new)
                 .put("Dr", DoctorMessageStrategy::new)
+                .put("Agent", AgentMessageStrategy::new)
                 .build();
 
     @Override

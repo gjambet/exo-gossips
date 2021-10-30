@@ -19,7 +19,7 @@ class DoctorMessageStrategy implements MessageStrategy {
 
     @Override
     public String getMessage() {
-        return messages.stream().collect(Collectors.joining(", "));
+        return MessageStrategies.formatMessages(messages);
     }
 
     @Override
