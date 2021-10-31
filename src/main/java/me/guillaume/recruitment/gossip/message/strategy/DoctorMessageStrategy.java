@@ -8,8 +8,8 @@ import me.guillaume.recruitment.gossip.domain.Person;
 class DoctorMessageStrategy implements MessageStrategy {
 
     private final List<String> messages = new ArrayList<>();
-    private  String newMessage;
-    private int itemToGossip = 0;
+    private String newMessage;
+    private int itemToSpread = 0;
 
     @Override
     public void initializeMessage(String message) {
@@ -32,10 +32,10 @@ class DoctorMessageStrategy implements MessageStrategy {
 
     @Override
     public void spread(Person spreader, Person listener) {
-        if (itemToGossip < messages.size()) {
-            boolean listenerUpdated = listener.updateMessage(spreader, messages.get(itemToGossip));
+        if (itemToSpread < messages.size()) {
+            boolean listenerUpdated = listener.updateMessage(spreader, messages.get(itemToSpread));
             if (listenerUpdated) {
-                itemToGossip++;
+                itemToSpread++;
             }
         }
     }

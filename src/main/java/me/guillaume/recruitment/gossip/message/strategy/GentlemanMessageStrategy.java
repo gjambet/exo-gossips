@@ -26,7 +26,7 @@ class GentlemanMessageStrategy implements MessageStrategy {
             return false;
         }
         this.newMessage = newMessage;
-        this.newSender = sender;
+        newSender = sender;
         isUpdated = true;
         return true;
     }

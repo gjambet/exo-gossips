@@ -26,7 +26,7 @@ class LadyMessageStrategy implements MessageStrategy {
             return false;
         }
         this.newMessage = newMessage;
-        this.newSender = sender;
+        newSender = sender;
         isUpdated = true;
         return true;
     }
@@ -47,7 +47,7 @@ class LadyMessageStrategy implements MessageStrategy {
             }
             return;
         }
-        throw new IllegalStateException("Lady only knows how to deal with Mr or Dr, not " + this.sender.getTitle());
+        throw new IllegalStateException("Lady only knows how to deal with Mr or Dr, not " + sender.getTitle());
     }
 
     @Override
